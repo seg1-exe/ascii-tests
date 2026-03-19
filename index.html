@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -13,6 +13,7 @@
       --border:    #d0d0d0;
       --text:      #111;
       --muted:     #888;
+      --red:       #e03030;
       --sidebar-w: 272px;
       --peek-h:    54px;
       --safe-b:    env(safe-area-inset-bottom, 0px);
@@ -37,7 +38,7 @@
       display: flex;
       align-items: center;
       padding: 0 18px;
-      gap: 12px;
+      gap: 0;
       flex-shrink: 0;
       z-index: 20;
     }
@@ -50,16 +51,11 @@
       font-weight: 500;
       letter-spacing: 0.02em;
       white-space: nowrap;
-    }
-
-    .logo-mark {
-      width: 13px;
-      height: 13px;
-      background: var(--text);
       flex-shrink: 0;
     }
 
-    /* Camera select — visible in topbar on desktop */
+    .logo-mark { width: 13px; height: 13px; background: var(--text); flex-shrink: 0; }
+
     .topbar-cam {
       display: flex;
       align-items: center;
@@ -67,11 +63,7 @@
       margin-left: 18px;
     }
 
-    .topbar-cam label {
-      font-size: 12px;
-      color: var(--muted);
-      white-space: nowrap;
-    }
+    .topbar-cam label { font-size: 12px; color: var(--muted); white-space: nowrap; }
 
     select.cam-select {
       background: var(--surface);
@@ -82,9 +74,8 @@
       padding: 4px 8px;
       cursor: pointer;
       outline: none;
-      max-width: 200px;
+      max-width: 180px;
     }
-
     select.cam-select:focus { border-color: var(--text); }
 
     .topbar-right {
@@ -94,62 +85,56 @@
       gap: 14px;
     }
 
-    .toggle-group {
-      display: flex;
-      align-items: center;
-      font-size: 12px;
-    }
-
+    /* Generic toggle group (Mirror/Invert, Camera/Video) */
+    .toggle-group { display: flex; align-items: center; font-size: 12px; }
     .toggle-group button {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-family: inherit;
-      font-size: 12px;
-      color: var(--muted);
-      padding: 4px 0;
-      min-height: 32px;
+      background: none; border: none; cursor: pointer;
+      font-family: inherit; font-size: 12px; color: var(--muted);
+      padding: 4px 0; min-height: 32px;
     }
-
     .toggle-group button.active { color: var(--text); font-weight: 600; }
     .toggle-group button:hover  { color: var(--text); }
     .toggle-group .sep { padding: 0 6px; color: var(--border); pointer-events: none; }
+
+    /* Buttons */
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: inherit; font-size: 12px;
+      padding: 5px 12px; cursor: pointer;
+      display: flex; align-items: center; gap: 6px;
+      white-space: nowrap; letter-spacing: 0.01em;
+    }
+    .btn-outline:hover { background: var(--border); }
 
     .btn-filled {
       background: var(--text);
       border: 1px solid var(--text);
       color: var(--surface);
-      font-family: inherit;
-      font-size: 12px;
-      padding: 5px 14px;
-      cursor: pointer;
-      letter-spacing: 0.02em;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      white-space: nowrap;
+      font-family: inherit; font-size: 12px;
+      padding: 5px 14px; cursor: pointer;
+      display: flex; align-items: center; gap: 6px;
+      white-space: nowrap; letter-spacing: 0.02em;
     }
-
     .btn-filled:hover { background: #333; border-color: #333; }
 
     .btn-filled .dot {
-      width: 7px;
-      height: 7px;
+      width: 7px; height: 7px;
       border-radius: 50%;
       background: var(--surface);
+      flex-shrink: 0;
     }
 
-    .btn-outline {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-family: inherit;
-      font-size: 12px;
-      padding: 8px 18px;
-      cursor: pointer;
+    /* Record button — red dot when recording */
+    #record-btn.recording {
+      background: var(--red);
+      border-color: var(--red);
     }
+    #record-btn.recording:hover { background: #c02020; border-color: #c02020; }
+    #record-btn.recording .dot { background: #fff; animation: blink 1s step-end infinite; }
 
-    .btn-outline:hover { background: var(--border); }
+    @keyframes blink { 50% { opacity: 0; } }
 
     /* ════════════════════════════════
        BODY
@@ -158,52 +143,36 @@
       flex: 1;
       display: flex;
       overflow: hidden;
-      height: calc(100vh - 52px - 36px); /* minus topbar + footer */
+      height: calc(100vh - 52px - 36px);
     }
 
     /* ════════════════════════════════
        PREVIEW
     ════════════════════════════════ */
     .preview {
-      flex: 1;
-      overflow: hidden;
-      background: var(--bg);
-      position: relative;
+      flex: 1; overflow: hidden;
+      background: var(--bg); position: relative;
     }
 
     #start-screen {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 14px;
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 20px;
     }
 
-    #start-screen p {
-      font-size: 12px;
-      color: var(--muted);
-      text-align: center;
-      padding: 0 24px;
+    .start-options {
+      display: flex; align-items: center; gap: 16px;
     }
 
-    #output-wrapper {
-      display: none;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-    }
+    .start-or { font-size: 12px; color: var(--muted); }
+
+    #output-wrapper { display: none; width: 100%; height: 100%; overflow: hidden; }
 
     #ascii-output {
       font-family: 'Courier New', 'Menlo', monospace;
-      font-size: 5.5px;
-      line-height: 1.05;
-      letter-spacing: 0.04em;
-      white-space: pre;
-      display: block;
-      width: 100%;
-      height: 100%;
+      font-size: 5.5px; line-height: 1.05; letter-spacing: 0.04em;
+      white-space: pre; display: block; width: 100%; height: 100%;
     }
 
     /* ════════════════════════════════
@@ -213,22 +182,15 @@
       width: var(--sidebar-w);
       border-left: 1px solid var(--border);
       background: var(--surface);
-      overflow-y: auto;
-      flex-shrink: 0;
-      display: flex;
-      flex-direction: column;
+      overflow-y: auto; flex-shrink: 0;
+      display: flex; flex-direction: column;
     }
-
     .sidebar::-webkit-scrollbar { width: 4px; }
     .sidebar::-webkit-scrollbar-thumb { background: var(--border); }
 
-    /* Drawer handle — hidden on desktop */
     .drawer-handle { display: none; }
 
-    .sidebar-scroll {
-      flex: 1;
-      overflow-y: visible; /* desktop: sidebar itself scrolls */
-    }
+    .sidebar-scroll { flex: 1; overflow-y: visible; }
 
     /* ════════════════════════════════
        PANELS
@@ -236,187 +198,88 @@
     .panel { border-bottom: 1px solid var(--border); }
 
     .panel-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 13px 16px;
+      display: flex; align-items: center;
+      justify-content: space-between; padding: 13px 16px;
     }
 
     .panel-title {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-      color: var(--muted);
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted);
     }
 
     .panel-body {
       padding: 0 16px 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 11px;
+      display: flex; flex-direction: column; gap: 11px;
     }
 
-    .row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
+    .row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .row-label { font-size: 12px; color: var(--text); flex-shrink: 0; }
 
-    .row-label {
-      font-size: 12px;
-      color: var(--text);
-      flex-shrink: 0;
-    }
-
-    .option-group {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 0;
-    }
-
+    .option-group { display: flex; align-items: center; flex-wrap: wrap; }
     .option-group button {
-      background: none;
-      border: none;
-      font-family: inherit;
-      font-size: 12px;
-      color: var(--muted);
-      cursor: pointer;
-      padding: 3px 0;
-      min-height: 28px;
+      background: none; border: none; font-family: inherit;
+      font-size: 12px; color: var(--muted); cursor: pointer;
+      padding: 3px 0; min-height: 28px;
     }
-
     .option-group button.active { color: var(--text); font-weight: 600; }
     .option-group button:hover  { color: var(--text); }
     .option-group .sep { padding: 0 5px; color: var(--border); pointer-events: none; }
 
-    /* ════════════════════════════════
-       COLOR PICKERS
-    ════════════════════════════════ */
-    .color-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
+    /* ── COLOR PICKERS ── */
+    .color-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .color-cell { display: flex; flex-direction: column; gap: 5px; }
     .color-cell label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
-
     .color-pick-row { display: flex; align-items: center; gap: 8px; }
 
     .swatch-btn {
-      position: relative;
-      width: 28px;
-      height: 28px;
-      border: 1px solid var(--border);
-      flex-shrink: 0;
-      overflow: hidden;
-      cursor: pointer;
+      position: relative; width: 28px; height: 28px;
+      border: 1px solid var(--border); flex-shrink: 0; overflow: hidden; cursor: pointer;
     }
-
     .swatch-btn input[type=color] {
-      position: absolute;
-      inset: -4px;
-      width: calc(100% + 8px);
-      height: calc(100% + 8px);
-      border: none;
-      padding: 0;
-      cursor: pointer;
-      opacity: 0.001;
+      position: absolute; inset: -4px;
+      width: calc(100% + 8px); height: calc(100% + 8px);
+      border: none; padding: 0; cursor: pointer; opacity: 0.001;
     }
-
     .swatch-fill { position: absolute; inset: 0; pointer-events: none; }
+    .hex-val { font-family: 'Courier New', monospace; font-size: 11px; color: var(--muted); }
 
-    .hex-val {
-      font-family: 'Courier New', monospace;
-      font-size: 11px;
-      color: var(--muted);
-    }
-
-    /* Preset dots */
     .preset-row { display: flex; gap: 5px; flex-wrap: wrap; }
-
     .preset-dot {
-      width: 24px;
-      height: 24px;
-      border: none;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      flex-shrink: 0;
+      width: 24px; height: 24px; border: none; cursor: pointer;
+      position: relative; overflow: hidden; flex-shrink: 0;
     }
-
     .preset-dot::after {
-      content: '';
-      position: absolute;
-      inset: 0;
+      content: ''; position: absolute; inset: 0;
       border: 1px solid rgba(0,0,0,0.12);
     }
 
-    /* Range slider */
+    /* ── RANGE SLIDER ── */
     input[type=range] {
-      -webkit-appearance: none;
-      height: 3px;
-      background: #bbb;
-      border-radius: 2px;
-      outline: none;
-      cursor: pointer;
+      -webkit-appearance: none; height: 3px;
+      background: #bbb; border-radius: 2px; outline: none; cursor: pointer;
     }
-
     input[type=range]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: var(--text);
-      cursor: pointer;
+      -webkit-appearance: none; width: 14px; height: 14px;
+      border-radius: 50%; background: var(--text); cursor: pointer;
     }
-
-    .slider-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
+    .slider-row { display: flex; align-items: center; gap: 10px; }
     .slider-row input[type=range] { flex: 1; }
+    .slider-val { font-size: 11px; color: var(--muted); font-family: monospace; min-width: 30px; text-align: right; }
 
-    .slider-val {
-      font-size: 11px;
-      color: var(--muted);
-      font-family: monospace;
-      min-width: 30px;
-      text-align: right;
-    }
+    #stats-panel { font-size: 11px; color: var(--muted); font-family: 'Courier New', monospace; }
 
-    /* Stats */
-    #stats-panel {
-      font-size: 11px;
-      color: var(--muted);
-      font-family: 'Courier New', monospace;
-    }
-
-    /* Camera select in sidebar (mobile) */
     .sidebar-cam { display: none; }
+    .sidebar-source { display: none; }
 
     /* ════════════════════════════════
        FOOTER
     ════════════════════════════════ */
     .footer {
-      height: 36px;
-      border-top: 1px solid var(--border);
+      height: 36px; border-top: 1px solid var(--border);
       background: var(--surface);
-      display: flex;
-      align-items: center;
-      padding: 0 18px;
-      gap: 32px;
-      flex-shrink: 0;
+      display: flex; align-items: center;
+      padding: 0 18px; gap: 32px; flex-shrink: 0;
     }
-
     .footer span { font-size: 11px; color: var(--muted); }
 
     video, canvas { display: none; }
@@ -425,121 +288,89 @@
        MOBILE  (≤ 767px)
     ════════════════════════════════ */
     @media (max-width: 767px) {
-
       html, body { touch-action: none; }
 
-      /* Topbar becomes a transparent overlay */
       .topbar {
-        position: fixed;
-        top: 0; left: 0; right: 0;
-        background: linear-gradient(to bottom, rgba(244,244,244,0.88) 0%, transparent 100%);
-        border-bottom: none;
-        z-index: 20;
-        backdrop-filter: none;
+        position: fixed; top: 0; left: 0; right: 0;
+        background: linear-gradient(to bottom, rgba(244,244,244,0.9) 0%, transparent 100%);
+        border-bottom: none; z-index: 20;
       }
 
-      /* Hide camera select from topbar on mobile */
-      .topbar-cam { display: none; }
+      /* Hide desktop-only topbar items */
+      .topbar-cam, .topbar-mirror, .topbar-source, .topbar-upload, .topbar-stop { display: none; }
 
-      /* Body fills everything */
-      .app-body {
-        height: 100vh;
-        position: relative;
-      }
+      .app-body { height: 100vh; position: relative; }
 
-      /* Preview fills screen */
-      .preview {
-        position: absolute;
-        inset: 0;
-      }
-
+      .preview { position: absolute; inset: 0; }
       #ascii-output { font-size: 4.5px; }
-
-      /* Footer hidden */
       .footer { display: none; }
 
-      /* ── SIDEBAR becomes bottom drawer ── */
+      /* Sidebar → bottom drawer */
       .sidebar {
-        position: fixed;
-        bottom: 0; left: 0; right: 0;
-        width: 100%;
-        height: 66vh;
-        border-left: none;
-        border-top: 1px solid var(--border);
+        position: fixed; bottom: 0; left: 0; right: 0;
+        width: 100%; height: 66vh;
+        border-left: none; border-top: 1px solid var(--border);
         border-radius: 14px 14px 0 0;
         overflow: hidden;
         transform: translateY(calc(100% - var(--peek-h)));
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 30;
-        will-change: transform;
+        z-index: 30; will-change: transform;
       }
-
       .sidebar.open { transform: translateY(0); }
 
-      /* Drawer handle — shown on mobile */
       .drawer-handle {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 7px;
-        flex-shrink: 0;
-        height: var(--peek-h);
-        padding: 0 16px;
-        cursor: pointer;
-        user-select: none;
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+        gap: 7px; flex-shrink: 0;
+        height: var(--peek-h); padding: 0 16px;
+        cursor: pointer; user-select: none;
         border-bottom: 1px solid var(--border);
       }
-
       .handle-bar {
-        width: 34px;
-        height: 3px;
-        background: var(--border);
-        border-radius: 2px;
+        width: 34px; height: 3px;
+        background: var(--border); border-radius: 2px;
       }
-
       .peek-row {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+        width: 100%; display: flex;
+        align-items: center; justify-content: space-between;
       }
-
-      #stats-peek {
-        font-size: 11px;
-        color: var(--muted);
-        font-family: 'Courier New', monospace;
+      #stats-peek { font-size: 11px; color: var(--muted); font-family: 'Courier New', monospace; }
+      .peek-right { display: flex; align-items: center; gap: 10px; }
+      .peek-toggles { display: flex; align-items: center; font-size: 12px; }
+      .peek-toggles button {
+        background: none; border: none; font-family: inherit;
+        font-size: 12px; color: var(--muted); cursor: pointer; padding: 4px 0;
       }
-
-      .peek-toggles {
-        display: flex;
-        align-items: center;
-        font-size: 12px;
-      }
-
+      .peek-toggles button.active { color: var(--text); font-weight: 600; }
       .peek-toggles .sep { padding: 0 5px; color: var(--border); pointer-events: none; }
 
-      /* Sidebar scroll area */
+      #record-btn-m {
+        background: var(--text); border: 1px solid var(--text);
+        color: var(--surface); font-family: inherit; font-size: 11px;
+        padding: 4px 10px; cursor: pointer;
+        display: flex; align-items: center; gap: 5px;
+      }
+      #record-btn-m.recording { background: var(--red); border-color: var(--red); }
+      #record-btn-m .dot {
+        width: 6px; height: 6px; border-radius: 50%;
+        background: var(--surface); flex-shrink: 0;
+      }
+      #record-btn-m.recording .dot { animation: blink 1s step-end infinite; }
+
       .sidebar-scroll {
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
+        overflow-y: auto; -webkit-overflow-scrolling: touch;
         overscroll-behavior: contain;
         height: calc(66vh - var(--peek-h));
       }
-
       .sidebar-scroll::-webkit-scrollbar { display: none; }
 
-      /* Show camera select inside sidebar on mobile */
-      .sidebar-cam { display: block; }
+      /* Show mobile-only panels */
+      .sidebar-cam    { display: block; }
+      .sidebar-source { display: block; }
 
-      /* Larger tap targets for chips */
       .option-group button { min-height: 36px; padding: 4px 0; }
-      input[type=range]::-webkit-slider-thumb {
-        width: 22px;
-        height: 22px;
-      }
+      input[type=range]::-webkit-slider-thumb { width: 22px; height: 22px; }
 
-      /* Stats panel hidden on mobile (shown in peek instead) */
       .panel-stats { display: none; }
     }
   </style>
@@ -553,23 +384,39 @@
       asciiCam
     </div>
 
-    <!-- Camera selector (desktop) -->
+    <!-- Camera selector (desktop only) -->
     <div class="topbar-cam">
-      <label>Caméra</label>
+      <label>Camera</label>
       <select class="cam-select" id="cam-select-top">
-        <option value="">— sélectionner —</option>
+        <option value="">— select —</option>
       </select>
     </div>
 
     <div class="topbar-right">
-      <div class="toggle-group">
-        <button id="mirror-btn">Miroir</button>
+      <!-- Mirror / Invert (desktop) -->
+      <div class="toggle-group topbar-mirror">
+        <button id="mirror-btn">Mirror</button>
         <span class="sep">/</span>
-        <button id="invert-btn">Inverser</button>
+        <button id="invert-btn">Invert</button>
       </div>
-      <button class="btn-filled" id="start-btn">
-        <span class="dot"></span><span id="start-label">Démarrer</span>
+
+      <!-- Source: Camera / Video (desktop) -->
+      <div class="toggle-group topbar-source">
+        <button class="src-opt active" data-src="camera">Camera</button>
+        <span class="sep">/</span>
+        <button class="src-opt" data-src="video">Video</button>
+      </div>
+
+      <!-- Upload (desktop) -->
+      <button class="btn-outline topbar-upload" id="upload-btn">↑ Upload</button>
+
+      <!-- Record -->
+      <button class="btn-filled" id="record-btn" disabled>
+        <span class="dot"></span><span id="record-label">Record</span>
       </button>
+
+      <!-- Stop (desktop, shown when running) -->
+      <button class="btn-outline topbar-stop" id="stop-btn" style="display:none;">■ Stop</button>
     </div>
   </div>
 
@@ -579,8 +426,13 @@
     <!-- Preview -->
     <div class="preview" id="preview">
       <div id="start-screen">
-        <p>Autorisez l'accès à la caméra pour commencer</p>
-        <button class="btn-outline" id="start-btn-2">Lancer la caméra</button>
+        <div class="start-options">
+          <button class="btn-filled" id="start-camera-btn">
+            <span class="dot"></span> Launch Camera
+          </button>
+          <span class="start-or">or</span>
+          <label class="btn-outline" for="video-file" style="cursor:pointer;">↑ Upload Video</label>
+        </div>
       </div>
       <div id="output-wrapper">
         <pre id="ascii-output"></pre>
@@ -595,10 +447,15 @@
         <div class="handle-bar"></div>
         <div class="peek-row">
           <span id="stats-peek">— × — · — fps</span>
-          <div class="peek-toggles">
-            <button id="mirror-btn-m">Miroir</button>
-            <span class="sep">/</span>
-            <button id="invert-btn-m">Inverser</button>
+          <div class="peek-right">
+            <div class="peek-toggles">
+              <button id="mirror-btn-m">Mirror</button>
+              <span class="sep">/</span>
+              <button id="invert-btn-m">Invert</button>
+            </div>
+            <button id="record-btn-m" disabled>
+              <span class="dot"></span><span class="rec-lbl">Record</span>
+            </button>
           </div>
         </div>
       </div>
@@ -606,30 +463,41 @@
       <!-- Scrollable content -->
       <div class="sidebar-scroll">
 
-        <!-- Camera (mobile) -->
+        <!-- Camera select (mobile only) -->
         <div class="panel sidebar-cam">
-          <div class="panel-header">
-            <div class="panel-title">Caméra</div>
-          </div>
+          <div class="panel-header"><div class="panel-title">Camera</div></div>
           <div class="panel-body">
-            <select class="cam-select" id="cam-select-sidebar" style="width:100%;padding:6px 8px;background:var(--surface);border:1px solid var(--border);font-family:inherit;font-size:12px;color:var(--text);outline:none;">
-              <option value="">— sélectionner —</option>
+            <select class="cam-select" id="cam-select-sidebar"
+              style="width:100%;padding:6px 8px;background:var(--surface);border:1px solid var(--border);font-family:inherit;font-size:12px;color:var(--text);outline:none;">
+              <option value="">— select —</option>
             </select>
+          </div>
+        </div>
+
+        <!-- Source + Upload (mobile only) -->
+        <div class="panel sidebar-source">
+          <div class="panel-header"><div class="panel-title">Source</div></div>
+          <div class="panel-body">
+            <div class="option-group">
+              <button class="src-opt active" data-src="camera">Camera</button>
+              <span class="sep">/</span>
+              <button class="src-opt" data-src="video">Video</button>
+            </div>
+            <label class="btn-outline" for="video-file" style="cursor:pointer;justify-content:center;">↑ Upload Video</label>
+            <button class="btn-outline" id="stop-btn-m" style="display:none;justify-content:center;">■ Stop</button>
           </div>
         </div>
 
         <!-- Charset -->
         <div class="panel">
-          <div class="panel-header">
-            <div class="panel-title">Charset</div>
-          </div>
+          <div class="panel-header"><div class="panel-title">Charset</div></div>
           <div class="panel-body">
             <div class="option-group">
               <button class="charset-opt active" data-charset="standard">Standard</button>
               <span class="sep">/</span>
               <button class="charset-opt" data-charset="minimal">Minimal</button>
               <span class="sep">/</span>
-              <button class="charset-opt" data-charset="blocks">Blocs</button>
+              <button class="charset-opt" data-charset="blocks">Blocks</button>
               <span class="sep">/</span>
               <button class="charset-opt" data-charset="dense">Dense</button>
               <span class="sep">/</span>
@@ -638,15 +506,13 @@
           </div>
         </div>
 
-        <!-- Couleur -->
+        <!-- Color -->
         <div class="panel">
-          <div class="panel-header">
-            <div class="panel-title">Couleur</div>
-          </div>
+          <div class="panel-header"><div class="panel-title">Color</div></div>
           <div class="panel-body">
             <div class="color-grid">
               <div class="color-cell">
-                <label>Texte</label>
+                <label>Text</label>
                 <div class="color-pick-row">
                   <div class="swatch-btn" id="fg-wrap">
                     <div class="swatch-fill" id="fg-swatch" style="background:#111111;"></div>
@@ -656,7 +522,7 @@
                 </div>
               </div>
               <div class="color-cell">
-                <label>Fond</label>
+                <label>Background</label>
                 <div class="color-pick-row">
                   <div class="swatch-btn" id="bg-wrap">
                     <div class="swatch-fill" id="bg-swatch" style="background:#ebebeb;"></div>
@@ -667,32 +533,30 @@
               </div>
             </div>
             <div class="preset-row">
-              <button class="preset-dot" title="Clair"  data-fg="#111111" data-bg="#ebebeb" style="background:linear-gradient(135deg,#111 50%,#ebebeb 50%);"></button>
-              <button class="preset-dot" title="Sombre" data-fg="#e0e0e0" data-bg="#111111" style="background:linear-gradient(135deg,#e0e0e0 50%,#111 50%);"></button>
-              <button class="preset-dot" title="Vert"   data-fg="#00cc33" data-bg="#0a0a0a" style="background:linear-gradient(135deg,#00cc33 50%,#0a0a0a 50%);"></button>
-              <button class="preset-dot" title="Ambre"  data-fg="#e09000" data-bg="#0c0a06" style="background:linear-gradient(135deg,#e09000 50%,#0c0a06 50%);"></button>
+              <button class="preset-dot" title="Light"  data-fg="#111111" data-bg="#ebebeb" style="background:linear-gradient(135deg,#111 50%,#ebebeb 50%);"></button>
+              <button class="preset-dot" title="Dark"   data-fg="#e0e0e0" data-bg="#111111" style="background:linear-gradient(135deg,#e0e0e0 50%,#111 50%);"></button>
+              <button class="preset-dot" title="Green"  data-fg="#00cc33" data-bg="#0a0a0a" style="background:linear-gradient(135deg,#00cc33 50%,#0a0a0a 50%);"></button>
+              <button class="preset-dot" title="Amber"  data-fg="#e09000" data-bg="#0c0a06" style="background:linear-gradient(135deg,#e09000 50%,#0c0a06 50%);"></button>
               <button class="preset-dot" title="Cyan"   data-fg="#00bfff" data-bg="#04080f" style="background:linear-gradient(135deg,#00bfff 50%,#04080f 50%);"></button>
-              <button class="preset-dot" title="Rose"   data-fg="#ff4da6" data-bg="#120009" style="background:linear-gradient(135deg,#ff4da6 50%,#120009 50%);"></button>
+              <button class="preset-dot" title="Pink"   data-fg="#ff4da6" data-bg="#120009" style="background:linear-gradient(135deg,#ff4da6 50%,#120009 50%);"></button>
             </div>
           </div>
         </div>
 
         <!-- Mapping -->
         <div class="panel">
-          <div class="panel-header">
-            <div class="panel-title">Mapping</div>
-          </div>
+          <div class="panel-header"><div class="panel-title">Mapping</div></div>
           <div class="panel-body">
             <div class="row">
               <span class="row-label">Source</span>
               <div class="option-group">
-                <button class="map-opt active" data-map="brightness">Luminosité</button>
+                <button class="map-opt active" data-map="brightness">Brightness</button>
                 <span class="sep">/</span>
-                <button class="map-opt" data-map="edge">Contours</button>
+                <button class="map-opt" data-map="edge">Edges</button>
               </div>
             </div>
             <div class="row">
-              <span class="row-label">Contraste</span>
+              <span class="row-label">Contrast</span>
               <div class="slider-row" style="flex:1;margin-left:12px;">
                 <input type="range" id="contrast-slider" min="0.5" max="3" step="0.1" value="1">
                 <span class="slider-val" id="contrast-val">×1.0</span>
@@ -701,60 +565,58 @@
           </div>
         </div>
 
-        <!-- Stats (desktop) -->
+        <!-- Info (desktop) -->
         <div class="panel panel-stats">
-          <div class="panel-header">
-            <div class="panel-title">Infos</div>
-          </div>
+          <div class="panel-header"><div class="panel-title">Info</div></div>
           <div class="panel-body">
             <div id="stats-panel">— × — · — fps</div>
           </div>
         </div>
 
-        <!-- Safe area spacer (mobile) -->
         <div style="height:var(--safe-b);flex-shrink:0;"></div>
+      </div>
+    </div>
 
-      </div><!-- /sidebar-scroll -->
-    </div><!-- /sidebar -->
-
-  </div><!-- /app-body -->
-
-  <!-- ── FOOTER (desktop) ── -->
-  <div class="footer">
-    <span>asciiCam v2.0</span>
-    <span>Résolution calculée automatiquement selon la taille de la fenêtre</span>
   </div>
 
-  <video id="video" autoplay playsinline></video>
+  <!-- FOOTER -->
+  <div class="footer">
+    <span>asciiCam v2.0</span>
+    <span>Resolution computed automatically · Record exports a .webm file</span>
+  </div>
+
+  <!-- Hidden file input (shared) -->
+  <input type="file" id="video-file" accept="video/*" style="display:none;">
+
+  <video id="video" autoplay playsinline muted loop></video>
   <canvas id="canvas"></canvas>
 
   <script>
-    // ─────────────────────────────────
-    // Character aspect ratio
-    // Courier New: char width ≈ 0.60em, letter-spacing 0.04em → 0.64em
-    // line-height 1.05 → ratio = 0.64 / 1.05 ≈ 0.610
-    // ─────────────────────────────────
-    const CHAR_ASPECT = 0.610;
-
-    // ── State ──
-    const state = {
-      running:    false,
-      inverted:   false,
-      mirrored:   false,
-      charset:    'standard',
-      fg:         '#111111',
-      bg:         '#ebebeb',
-      mapping:    'brightness',
-      contrast:   1.0,
-      deviceId:   null,
-    };
-
+    // ─────────────────────────────────────────────
+    // Char geometry
+    // Courier New: glyph ≈ 0.60em + letter-spacing 0.04em = 0.64em wide
+    // line-height 1.05 → ratio charW/charH = 0.64/1.05 ≈ 0.610
+    // ─────────────────────────────────────────────
     const CHARSETS = {
       standard: ' .\'`^",:;Il!i><~+_-?][}{1)(|/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$',
       blocks:   ' ░▒▓█',
       minimal:  ' .:+#@',
       dense:    ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~',
       binary:   ' 01',
+    };
+
+    const state = {
+      running:   false,
+      source:    'camera',   // 'camera' | 'video'
+      recording: false,
+      inverted:  false,
+      mirrored:  false,
+      charset:   'standard',
+      fg:        '#111111',
+      bg:        '#ebebeb',
+      mapping:   'brightness',
+      contrast:  1.0,
+      deviceId:  null,
     };
 
     // ── DOM ──
@@ -772,43 +634,130 @@
     const fgHex          = document.getElementById('fg-hex');
     const bgHex          = document.getElementById('bg-hex');
     const contrastSlider = document.getElementById('contrast-slider');
-    const contrastVal    = document.getElementById('contrast-val');
+    const contrastValEl  = document.getElementById('contrast-val');
+    const videoFileInput = document.getElementById('video-file');
     const camSelectors   = document.querySelectorAll('.cam-select');
 
-    let animFrame  = null;
-    let lastTime   = 0;
-    let frameCount = 0;
-    let fps        = 0;
+    let animFrame    = null;
+    let lastTime     = 0;
+    let frameCount   = 0;
+    let fps          = 0;
+    let videoFileURL = null;
 
-    // ─────────────────────────────────
+    // ─────────────────────────────────────────────
+    // Recording — off-screen canvas + MediaRecorder
+    // ─────────────────────────────────────────────
+    const REC_FONT_SIZE = 10;
+    let recCharW = null;
+
+    function getRecCharW() {
+      if (recCharW === null) {
+        const tmp = document.createElement('canvas').getContext('2d');
+        tmp.font = `${REC_FONT_SIZE}px 'Courier New', monospace`;
+        recCharW = tmp.measureText('M').width;
+      }
+      return recCharW;
+    }
+
+    const exportCanvas = document.createElement('canvas');
+    const exportCtx    = exportCanvas.getContext('2d');
+    let mediaRecorder  = null;
+    let recordChunks   = [];
+
+    function renderToExportCanvas(result, cols, rows) {
+      const cw = getRecCharW();
+      const ch = REC_FONT_SIZE * 1.1;
+      const w  = Math.round(cols * cw);
+      const h  = Math.round(rows * ch);
+      if (exportCanvas.width !== w || exportCanvas.height !== h) {
+        exportCanvas.width  = w;
+        exportCanvas.height = h;
+      }
+      exportCtx.fillStyle = state.bg;
+      exportCtx.fillRect(0, 0, w, h);
+      exportCtx.fillStyle = state.fg;
+      exportCtx.font = `${REC_FONT_SIZE}px 'Courier New', monospace`;
+      exportCtx.textBaseline = 'top';
+      result.split('\n').forEach((line, i) => {
+        exportCtx.fillText(line, 0, i * ch);
+      });
+    }
+
+    function startRecording() {
+      recordChunks = [];
+      const mimeType = ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm']
+        .find(t => MediaRecorder.isTypeSupported(t)) || 'video/webm';
+      const stream = exportCanvas.captureStream(30);
+      mediaRecorder = new MediaRecorder(stream, { mimeType });
+      mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordChunks.push(e.data); };
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(recordChunks, { type: 'video/webm' });
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        a.href = url;
+        a.download = `ascii-${Date.now()}.webm`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      };
+      mediaRecorder.start(100);
+      state.recording = true;
+      syncRecordBtns();
+    }
+
+    function stopRecording() {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+      state.recording = false;
+      syncRecordBtns();
+    }
+
+    function syncRecordBtns() {
+      const btns = [document.getElementById('record-btn'), document.getElementById('record-btn-m')];
+      btns.forEach(btn => {
+        if (!btn) return;
+        btn.classList.toggle('recording', state.recording);
+        const lbl = btn.querySelector('.rec-lbl') || btn.querySelector('#record-label');
+        if (lbl) lbl.textContent = state.recording ? 'Stop' : 'Record';
+        // update the inline id too
+        const inlineLabel = document.getElementById('record-label');
+        if (inlineLabel) inlineLabel.textContent = state.recording ? 'Stop' : 'Record';
+      });
+    }
+
+    function toggleRecord() {
+      if (!state.running) return;
+      state.recording ? stopRecording() : startRecording();
+    }
+
+    document.getElementById('record-btn').addEventListener('click', toggleRecord);
+    document.getElementById('record-btn-m').addEventListener('click', toggleRecord);
+
+    // ─────────────────────────────────────────────
     // Colors
-    // ─────────────────────────────────
+    // ─────────────────────────────────────────────
     function applyColors(fg, bg) {
       state.fg = fg; state.bg = bg;
       output.style.color         = fg;
       previewEl.style.background = bg;
       fgSwatch.style.background  = fg;
       bgSwatch.style.background  = bg;
-      fgPicker.value = fg;
-      bgPicker.value = bg;
-      fgHex.textContent = fg;
-      bgHex.textContent = bg;
+      fgPicker.value = fg; bgPicker.value = bg;
+      fgHex.textContent = fg; bgHex.textContent = bg;
     }
-
     applyColors('#111111', '#ebebeb');
 
     fgPicker.addEventListener('input', () => applyColors(fgPicker.value, state.bg));
     bgPicker.addEventListener('input', () => applyColors(state.fg, bgPicker.value));
     document.getElementById('fg-wrap').addEventListener('click', () => fgPicker.click());
     document.getElementById('bg-wrap').addEventListener('click', () => bgPicker.click());
-
-    document.querySelectorAll('.preset-dot').forEach(btn =>
-      btn.addEventListener('click', () => applyColors(btn.dataset.fg, btn.dataset.bg))
+    document.querySelectorAll('.preset-dot').forEach(b =>
+      b.addEventListener('click', () => applyColors(b.dataset.fg, b.dataset.bg))
     );
 
-    // ─────────────────────────────────
-    // Charset
-    // ─────────────────────────────────
+    // ─────────────────────────────────────────────
+    // Charset / Mapping / Contrast
+    // ─────────────────────────────────────────────
     document.querySelectorAll('.charset-opt').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.charset-opt').forEach(b => b.classList.remove('active'));
@@ -817,9 +766,6 @@
       });
     });
 
-    // ─────────────────────────────────
-    // Mapping
-    // ─────────────────────────────────
     document.querySelectorAll('.map-opt').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.map-opt').forEach(b => b.classList.remove('active'));
@@ -828,222 +774,240 @@
       });
     });
 
-    // ─────────────────────────────────
-    // Contrast
-    // ─────────────────────────────────
     contrastSlider.addEventListener('input', () => {
       state.contrast = parseFloat(contrastSlider.value);
-      contrastVal.textContent = '×' + state.contrast.toFixed(1);
+      contrastValEl.textContent = '×' + state.contrast.toFixed(1);
     });
 
-    // ─────────────────────────────────
-    // Mirror / Invert (desktop + mobile)
-    // ─────────────────────────────────
-    function bindToggle(ids, stateKey) {
+    // ─────────────────────────────────────────────
+    // Mirror / Invert
+    // ─────────────────────────────────────────────
+    function bindToggle(ids, key) {
       ids.forEach(id => {
         const el = document.getElementById(id);
         if (!el) return;
         el.addEventListener('click', () => {
-          state[stateKey] = !state[stateKey];
-          ids.forEach(i => {
-            const b = document.getElementById(i);
-            if (b) b.classList.toggle('active', state[stateKey]);
-          });
+          state[key] = !state[key];
+          ids.forEach(i => document.getElementById(i)?.classList.toggle('active', state[key]));
         });
       });
     }
-
     bindToggle(['mirror-btn', 'mirror-btn-m'], 'mirrored');
     bindToggle(['invert-btn', 'invert-btn-m'], 'inverted');
 
-    // ─────────────────────────────────
+    // ─────────────────────────────────────────────
     // Mobile drawer
-    // ─────────────────────────────────
-    const PEEK_H = 54;
-    let dragStartY  = null;
-    let dragStartTY = 0;
-    let dragging    = false;
-    let drawerOpen  = false;
+    // ─────────────────────────────────────────────
+    const PEEK_H   = 54;
+    let dragStartY = null, dragStartTY = 0, dragging = false, drawerOpen = false;
 
     function isMobile() { return window.matchMedia('(max-width: 767px)').matches; }
 
-    function getTranslateY() {
-      const mat = new WebKitCSSMatrix(window.getComputedStyle(sidebar).transform);
-      return mat.m42;
+    function getTY() {
+      return new WebKitCSSMatrix(window.getComputedStyle(sidebar).transform).m42;
     }
-
     function openDrawer()  { sidebar.style.transition = ''; sidebar.classList.add('open');    drawerOpen = true; }
     function closeDrawer() { sidebar.style.transition = ''; sidebar.classList.remove('open'); drawerOpen = false; }
 
-    drawerHandle.addEventListener('click', () => {
-      if (dragging) return;
-      drawerOpen ? closeDrawer() : openDrawer();
-    });
-
+    drawerHandle.addEventListener('click', () => { if (!dragging) drawerOpen ? closeDrawer() : openDrawer(); });
     drawerHandle.addEventListener('touchstart', e => {
-      dragStartY  = e.touches[0].clientY;
-      dragStartTY = getTranslateY();
-      dragging    = false;
+      dragStartY = e.touches[0].clientY; dragStartTY = getTY(); dragging = false;
       sidebar.style.transition = 'none';
     }, { passive: true });
-
     drawerHandle.addEventListener('touchmove', e => {
       if (dragStartY === null) return;
       const dy = e.touches[0].clientY - dragStartY;
       if (Math.abs(dy) > 5) dragging = true;
-      const maxY = sidebar.offsetHeight - PEEK_H; // can't go lower than closed position
-      const newY = Math.max(0, Math.min(maxY, dragStartTY + dy));
-      sidebar.style.transform = `translateY(${newY}px)`;
+      const maxY = sidebar.offsetHeight - PEEK_H;
+      sidebar.style.transform = `translateY(${Math.max(0, Math.min(maxY, dragStartTY + dy))}px)`;
     }, { passive: true });
-
     drawerHandle.addEventListener('touchend', () => {
       sidebar.style.transition = '';
       if (!dragging) return;
       dragging = false;
-      getTranslateY() > sidebar.offsetHeight * 0.3 ? closeDrawer() : openDrawer();
+      getTY() > sidebar.offsetHeight * 0.3 ? closeDrawer() : openDrawer();
       dragStartY = null;
     });
 
-    // ─────────────────────────────────
+    // ─────────────────────────────────────────────
     // Camera enumeration
-    // ─────────────────────────────────
+    // ─────────────────────────────────────────────
     async function populateCameras() {
       try {
         const devices = await navigator.mediaDevices.enumerateDevices();
         const cams    = devices.filter(d => d.kind === 'videoinput');
-
         camSelectors.forEach(sel => {
           const prev = sel.value;
           sel.innerHTML = '';
           cams.forEach((cam, i) => {
-            const opt   = document.createElement('option');
-            opt.value   = cam.deviceId;
-            opt.text    = cam.label || `Caméra ${i + 1}`;
+            const opt = document.createElement('option');
+            opt.value = cam.deviceId;
+            opt.text  = cam.label || `Camera ${i + 1}`;
             sel.appendChild(opt);
           });
-          // Restore selection or pick default
           if (prev && [...sel.options].some(o => o.value === prev)) sel.value = prev;
           else if (cams.length) sel.value = cams[0].deviceId;
         });
-
         if (cams.length) state.deviceId = camSelectors[0].value;
       } catch (_) {}
     }
 
     camSelectors.forEach(sel => {
       sel.addEventListener('change', () => {
-        // Sync both selects
         camSelectors.forEach(s => s.value = sel.value);
         state.deviceId = sel.value;
-        if (state.running) switchCamera(sel.value);
+        if (state.running && state.source === 'camera') switchCamera(sel.value);
       });
     });
 
     async function switchCamera(deviceId) {
-      if (video.srcObject) {
-        video.srcObject.getTracks().forEach(t => t.stop());
-      }
-      const constraints = {
+      if (video.srcObject) video.srcObject.getTracks().forEach(t => t.stop());
+      const stream = await navigator.mediaDevices.getUserMedia({
         video: deviceId
           ? { deviceId: { exact: deviceId }, width: { ideal: 1920 }, height: { ideal: 1080 } }
           : { width: { ideal: 1920 }, height: { ideal: 1080 } },
         audio: false,
-      };
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      });
       video.srcObject = stream;
+      video.src = '';
       await video.play();
     }
 
-    // ─────────────────────────────────
-    // Start / Stop
-    // ─────────────────────────────────
-    async function startCamera() {
-      try {
-        // Start camera directly (single permission prompt)
-        await switchCamera(state.deviceId);
-
-        // Permission is now granted — enumerate devices to get labels
-        await populateCameras();
-
-        // Sync the select to the actual running track's deviceId
-        const track = video.srcObject?.getVideoTracks()[0];
-        if (track) {
-          const actualId = track.getSettings().deviceId;
-          if (actualId) {
-            state.deviceId = actualId;
-            camSelectors.forEach(s => { s.value = actualId; });
-          }
-        }
-
-        document.getElementById('start-screen').style.display  = 'none';
-        document.getElementById('output-wrapper').style.display = 'block';
-
-        state.running = true;
-        document.getElementById('start-label').textContent = 'Arrêter';
-        document.querySelector('#start-btn .dot').style.background = '#ff4444';
-
-        document.getElementById('start-btn').onclick  = stopCamera;
-        document.getElementById('start-btn-2').onclick = stopCamera;
-
-        loop();
-      } catch (err) {
-        alert('Impossible d\'accéder à la caméra : ' + err.message);
-      }
+    // ─────────────────────────────────────────────
+    // Source toggle (Camera / Video)
+    // ─────────────────────────────────────────────
+    function setSrcActive(src) {
+      document.querySelectorAll('.src-opt').forEach(b =>
+        b.classList.toggle('active', b.dataset.src === src)
+      );
     }
 
-    function stopCamera() {
-      state.running = false;
-      if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; }
-      if (video.srcObject) {
-        video.srcObject.getTracks().forEach(t => t.stop());
-        video.srcObject = null;
-      }
-      if (isMobile()) closeDrawer();
+    document.querySelectorAll('.src-opt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const src = btn.dataset.src;
+        if (src === 'camera') {
+          setSrcActive('camera');
+          if (state.running && state.source === 'video') {
+            stopSource();
+            startCamera();
+          } else if (!state.running) {
+            startCamera();
+          }
+        } else {
+          setSrcActive('video');
+          videoFileInput.click();
+        }
+      });
+    });
+
+    document.getElementById('upload-btn')?.addEventListener('click', () => videoFileInput.click());
+
+    videoFileInput.addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (file) { setSrcActive('video'); startVideo(file); }
+      e.target.value = '';
+    });
+
+    // ─────────────────────────────────────────────
+    // Start / Stop
+    // ─────────────────────────────────────────────
+    function showOutput() {
+      document.getElementById('start-screen').style.display   = 'none';
+      document.getElementById('output-wrapper').style.display = 'block';
+      document.getElementById('record-btn').disabled          = false;
+      document.getElementById('record-btn-m').disabled        = false;
+      document.getElementById('stop-btn').style.display       = 'flex';
+      const stopM = document.getElementById('stop-btn-m');
+      if (stopM) stopM.style.display = 'flex';
+    }
+
+    function hideOutput() {
       document.getElementById('start-screen').style.display   = 'flex';
       document.getElementById('output-wrapper').style.display = 'none';
+      document.getElementById('record-btn').disabled          = true;
+      document.getElementById('record-btn-m').disabled        = true;
+      document.getElementById('stop-btn').style.display       = 'none';
+      const stopM = document.getElementById('stop-btn-m');
+      if (stopM) stopM.style.display = 'none';
       output.textContent = '';
-      document.getElementById('start-label').textContent = 'Démarrer';
-      document.querySelector('#start-btn .dot').style.background = '';
-      document.getElementById('start-btn').onclick  = startCamera;
-      document.getElementById('start-btn-2').onclick = startCamera;
     }
 
-    document.getElementById('start-btn').addEventListener('click', startCamera);
-    document.getElementById('start-btn-2').addEventListener('click', startCamera);
+    function stopSource() {
+      state.running = false;
+      if (state.recording) stopRecording();
+      if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; }
+      if (video.srcObject) { video.srcObject.getTracks().forEach(t => t.stop()); video.srcObject = null; }
+      if (videoFileURL)    { video.pause(); video.src = ''; URL.revokeObjectURL(videoFileURL); videoFileURL = null; }
+      if (isMobile()) closeDrawer();
+      hideOutput();
+    }
 
-    // ─────────────────────────────────
-    // Dimensions — fills preview exactly
-    // ─────────────────────────────────
+    async function startCamera() {
+      try {
+        await switchCamera(state.deviceId);
+        await populateCameras();
+        const track = video.srcObject?.getVideoTracks()[0];
+        if (track) {
+          const id = track.getSettings().deviceId;
+          if (id) { state.deviceId = id; camSelectors.forEach(s => s.value = id); }
+        }
+        state.source  = 'camera';
+        state.running = true;
+        showOutput();
+        loop();
+      } catch (err) {
+        alert('Camera access denied: ' + err.message);
+      }
+    }
+
+    async function startVideo(file) {
+      if (state.running) stopSource();
+      if (videoFileURL) URL.revokeObjectURL(videoFileURL);
+      videoFileURL  = URL.createObjectURL(file);
+      video.srcObject = null;
+      video.src  = videoFileURL;
+      video.loop = true;
+      video.muted = true;
+      try {
+        await video.play();
+        state.source  = 'video';
+        state.running = true;
+        showOutput();
+        loop();
+      } catch (err) {
+        alert('Could not play video: ' + err.message);
+      }
+    }
+
+    document.getElementById('start-camera-btn').addEventListener('click', () => {
+      setSrcActive('camera'); startCamera();
+    });
+    document.getElementById('stop-btn').addEventListener('click', stopSource);
+    document.getElementById('stop-btn-m')?.addEventListener('click', stopSource);
+
+    // ─────────────────────────────────────────────
+    // Dimensions — fills preview without distortion
+    // ─────────────────────────────────────────────
     function calcDimensions() {
       if (!video.videoWidth) return { cols: 80, rows: 40 };
-
       const W       = previewEl.clientWidth;
       const H       = previewEl.clientHeight;
       const vAspect = video.videoHeight / video.videoWidth;
-
-      // Character cell size in px
-      // Courier New: glyph ≈ 0.60em wide + letter-spacing 0.04em = 0.64em
-      // line-height 1.05 → charH = fontSize * 1.05
       const fontSize = isMobile() ? 4.5 : 5.5;
-      const charW = fontSize * 0.64;
-      const charH = fontSize * 1.05;
-
-      // Fit cols so that the resulting grid fills W×H without overflow:
-      //   cols * charW ≤ W   →  cols ≤ W / charW
-      //   rows * charH ≤ H   →  cols * vAspect * (charW/charH) * charH ≤ H
-      //                      →  cols ≤ H / (vAspect * charW)
+      const charW   = fontSize * 0.64;   // 0.60em glyph + 0.04em letter-spacing
+      const charH   = fontSize * 1.05;
+      // cols * charW ≤ W  AND  rows * charH ≤ H  where rows = cols * vAspect * (charW/charH)
       const cols = Math.min(
         Math.floor(W / charW),
         Math.floor(H / (vAspect * charW))
       );
       const rows = Math.floor(cols * vAspect * (charW / charH));
-
       return { cols: Math.max(cols, 10), rows: Math.max(rows, 5) };
     }
 
-    // ─────────────────────────────────
+    // ─────────────────────────────────────────────
     // Sobel edge detection
-    // ─────────────────────────────────
+    // ─────────────────────────────────────────────
     function sobelLum(data, w, h, x, y) {
       function l(px, py) {
         const i = (py * w + px) * 4;
@@ -1051,23 +1015,14 @@
       }
       const cx = Math.max(1, Math.min(w-2, x));
       const cy = Math.max(1, Math.min(h-2, y));
-      const gx = -l(cx-1,cy-1) - 2*l(cx-1,cy) - l(cx-1,cy+1) + l(cx+1,cy-1) + 2*l(cx+1,cy) + l(cx+1,cy+1);
-      const gy = -l(cx-1,cy-1) - 2*l(cx,cy-1) - l(cx+1,cy-1) + l(cx-1,cy+1) + 2*l(cx,cy+1) + l(cx+1,cy+1);
+      const gx = -l(cx-1,cy-1)-2*l(cx-1,cy)-l(cx-1,cy+1)+l(cx+1,cy-1)+2*l(cx+1,cy)+l(cx+1,cy+1);
+      const gy = -l(cx-1,cy-1)-2*l(cx,cy-1)-l(cx+1,cy-1)+l(cx-1,cy+1)+2*l(cx,cy+1)+l(cx+1,cy+1);
       return Math.min(255, Math.sqrt(gx*gx + gy*gy));
     }
 
-    // ─────────────────────────────────
-    // Stats update
-    // ─────────────────────────────────
-    function updateStats(cols, rows) {
-      const txt = `${cols} × ${rows} · ${fps} fps`;
-      document.getElementById('stats-peek').textContent  = txt;
-      document.getElementById('stats-panel').textContent = txt;
-    }
-
-    // ─────────────────────────────────
+    // ─────────────────────────────────────────────
     // Render loop
-    // ─────────────────────────────────
+    // ─────────────────────────────────────────────
     function loop(timestamp = 0) {
       animFrame = requestAnimationFrame(loop);
       if (!video.videoWidth) return;
@@ -1076,13 +1031,11 @@
       const elapsed = timestamp - lastTime;
       if (elapsed >= 1000) {
         fps = Math.round(frameCount * 1000 / elapsed);
-        frameCount = 0;
-        lastTime = timestamp;
+        frameCount = 0; lastTime = timestamp;
       }
 
       const { cols, rows } = calcDimensions();
-      canvas.width  = cols;
-      canvas.height = rows;
+      canvas.width = cols; canvas.height = rows;
 
       ctx.save();
       if (state.mirrored) { ctx.translate(cols, 0); ctx.scale(-1, 1); }
@@ -1110,7 +1063,12 @@
       }
 
       output.textContent = result;
-      updateStats(cols, rows);
+
+      if (state.recording) renderToExportCanvas(result, cols, rows);
+
+      const txt = `${cols} × ${rows} · ${fps} fps`;
+      document.getElementById('stats-peek').textContent  = txt;
+      document.getElementById('stats-panel').textContent = txt;
     }
   </script>
 </body>
